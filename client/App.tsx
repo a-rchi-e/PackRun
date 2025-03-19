@@ -1,13 +1,15 @@
 import { Button, Pressable, Text, View } from 'react-native';
 import styles from "./helpers/Styles.js";
 import { useState } from 'react';
-import helper from './helpers/helper.js';
+import helper from './helpers/helper';
 
 export default function App() {
   const [maptxt, setMapText] = useState('');
 
   function getLocation() {
+    helper.getSystem();
     setMapText('getting gps position...');
+
     helper.Android.GPS.getLocation(setMapText);
   }
 
