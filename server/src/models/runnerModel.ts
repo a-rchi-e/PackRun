@@ -5,7 +5,7 @@ export interface RunnerAttributes {
   id?: bigint,
   userId: string,
   latitude: number,
-  longitude: number, //how will the location look like from frontend? 
+  longitude: number, 
 }
 
 class Runner extends Model<RunnerAttributes> implements RunnerAttributes {
