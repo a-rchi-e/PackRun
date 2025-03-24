@@ -1,77 +1,79 @@
 import { Request, Response } from "express"
-import Runner, { RunnerAttributes } from "../models/runnerModel";
-import ChatRoom from "../models/chatRoomModel";
-import { assignToDatabase } from "./controllerFunctions";
+import RunnerModel, { Runner } from "../models/runnerModel";
+import ChatRoomModel from "../models/chatRoomModel";
+import { assignToChatRoom } from "./controllerFunctions";
+import sequelize from "../models/model";
 
-export async function setLocation(req: Request, res: Response) {
+export async function setLocation(req: Request, res: Response, next: Function) {
 
-  if (isMissingData(req)) res.status(400).json('Missing fields');
+  if (isMissingFields(req)) res.status(400).json('Missing fields');
+  else if (incorrectCoordinates(req)) res.status(400).json('Incorrect coordinates ');
   else {
 
     const { userId, longitude, latitude } = req.body;
-    const runner: RunnerAttributes = { userId, longitude, latitude }
+    const runner: Runner = { userId, longitude, latitude }
 
-    const isRunnerLoggedIn = await Runner.findOne({ where: { userId } });
+    const isRunnerLoggedIn = await RunnerModel.findOne({ where: { userId } });
 
     if (isRunnerLoggedIn) {
 
-      const updatePosition = await Runner.update({ longitude, latitude }, { where: { userId } });
+      const updatePosition = await RunnerModel.update({ longitude, latitude }, { where: { userId } });
       console.log('updated=', updatePosition);
     }
     else {
 
-      const loginRunner = await Runner.create(runner);
+      const loginRunner = await RunnerModel.create(runner);
       console.log('created', loginRunner);
     }
 
-    const asignedChatRoom = await assignToDatabase(runner);
-    res.status(201).json({ chatroom: asignedChatRoom });
     console.log(`long=${longitude} lat=${latitude} userId=${userId}`);
+    next();
   }
+}
+export async function logUserInChatRoom(req: Request, res: Response) {
+  const runner: Runner = req.body;
+  const response = await assignToChatRoom(runner);
+  if (response) res.status(201).json(response);
+  else res.status(500).json('Server error');
 }
 
 export async function getAllMessages(req: Request, res: Response) {
-  const chatRoomId = req.params.chatroom;
-  console.log(chatRoomId);
+  const chatRoomId = await getChatRoomId(req);
   if (chatRoomId) {
-    const room = await ChatRoom.findOne({ where: { chatRoomId } });
+    const room = await ChatRoomModel.findOne({ where: { chatRoomId } });
     if (room && room.messages) res.json(room.messages);
     else res.json([]);
-  }
-};
+  } else res.json([]);
 
+};
+async function getChatRoomId(req: Request) {
+  const userId = req.params.userId;
+  const runner = await RunnerModel.findOne({ where: { userId } });
+  return runner?.assignedChatRoom;
+}
 export async function postMessage(req: Request, res: Response) {
-  const chatRoomId = req.params.chatroom;
+  const chatRoomId = await getChatRoomId(req);
 
   if (chatRoomId && req.body) {
-    const room = await ChatRoom.findOne({ where: { chatRoomId } });
+    const room = await ChatRoomModel.findOne({ where: { chatRoomId } });
     if (room && room.messages) {
       const newMessages = room.messages ? [...room.messages, req.body] : [req.body];
-      const isMessagePublished = await ChatRoom.update({ messages: newMessages }, { where: { chatRoomId } });
+      const isMessagePublished = await ChatRoomModel.update({ messages: newMessages }, { where: { chatRoomId } });
       if (isMessagePublished) res.status(201).send('Message published');
       else res.status(500).send('Server error');
     }
   }
 };
 
-function isMissingData(req: Request): boolean {
+function isMissingFields(req: Request): boolean {
   return !req.body || Object.keys(req.body).length === 0
     || !Object.keys(req.body).includes('longitude') || !Object.keys(req.body).includes('latitude')
     || !Object.keys(req.body).includes('userId')
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+function incorrectCoordinates(req: Request) {
+  return req.body.latitude < -90 || req.body.latitude > 90 || req.body.longitude < -180 || req.body.longitude > 180;
+}
 
 
 /* 
@@ -96,14 +98,4 @@ export function getNearbyRunners(req: Request, res: Response) {
       });
   }
 }
-
-//! I think this function should not exist for users
-export async function getAllRunners(req: Request, res: Response) {
-  try {
-    const allRunners = await Runner.findAll();
-    res.status(200).json(allRunners)
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error })
-  }
-}; */
+*/
