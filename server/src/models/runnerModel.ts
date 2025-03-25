@@ -1,4 +1,4 @@
-import { Model, DataTypes } from "sequelize";
+import { Model, DataTypes, DateDataType } from "sequelize";
 import sequelize from "./model";
 
 export interface Runner {
@@ -6,7 +6,8 @@ export interface Runner {
   userId: string,
   latitude: number,
   longitude: number,
-  assignedChatRoom?: string
+  assignedChatRoom?: string,
+  updatedAt?: Date;
 }
 
 class RunnerModel extends Model<Runner> implements Runner {
@@ -15,6 +16,7 @@ class RunnerModel extends Model<Runner> implements Runner {
   public latitude!: number;
   public longitude!: number;
   assignedChatRoom!: string;
+  updatedAt!: Date;
 }
 
 // initializing a new table with sequelize
@@ -49,3 +51,17 @@ RunnerModel.init(
 );
 
 export default RunnerModel; 
+
+// Initialize the database and create the "runner" table
+async function initializeDatabase() {
+  try {
+    await sequelize.sync(); // Creates the "runner" table
+    console.log('Database synchronized successfully');
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Start the process
+initializeDatabase();

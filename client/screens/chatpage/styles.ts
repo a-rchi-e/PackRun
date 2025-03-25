@@ -1,42 +1,46 @@
 import { StyleSheet } from "react-native";
 
-// const styles = StyleSheet.create({
-//     container: {
-//         width: '100%',
-//         height: 776,
-//         backgroundColor: 'lightgrey',
-//     },
-//     topdash: {
-//         width: '100%',
-//         height: 116,
-//         backgroundColor: '#f8f8f8',
-//         justifyContent: 'flex-end',
-//         alignItems: 'center',
-//         paddingBottom: 10
-//     },
-//     dashtext: {
-//         fontSize: 20,
-//         fontWeight: 'bold',
-//         color: '#333',
-//         fontFamily: 'Roboto',
-//     }
-// });
-
-// export default styles;
-
 export default StyleSheet.create({
 container: {
     width: '100%',
     height: 776,
     backgroundColor: 'lightgrey',
 },
-  messageBubble: {
+  userMessage: {
     backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+    marginRight: '2%',
+    marginTop: 3
+  },
+  otherMessage: {
+    backgroundColor: 'orange',
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,
     alignSelf: 'flex-start',
     maxWidth: '80%',
+    marginLeft: '2%',
+    marginTop: 3
+  },
+  username: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: 'bold',
+    textAlign: 'right',
+    marginRight: '5%',
+    marginTop: 10
+  },
+  othername: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginLeft: '5%',
+    marginTop: 10
   },
   topdash: {
     width: '100%',

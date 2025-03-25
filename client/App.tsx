@@ -1,31 +1,31 @@
-import { Button, Pressable, Text, View } from 'react-native';
-import { useState } from 'react';
-// import helper from './helpers/helper.js';
-import Homepage from './screens/homepage/Homepage';
-import Chatscreen from './screens/chatpage/Chatscreen'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createStaticNavigation } from '@react-navigation/native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+// react native
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+// navigation
+import HomePage from './screens/homepage/Homepage';
+import RunTracking from './screens/runtracking/CurrentRun';
 import RunHistory from './screens/runhistory/RunHistory';
-import CurrentRun from './screens/Runtracking/CurrentRun';
+import ChatScreen from './screens/chatpage/Chatscreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 export default function App() {
 
+  const NavBar = createBottomTabNavigator();
+  const screenOptions = {
+    headerShown: false,
+  }
+
   return (
-    <SafeAreaView>
-      <Navigation />
+    <SafeAreaView style={{flex :1, backgroundColor: '#f8f8f8'}}>
+      <NavigationContainer>
+        <NavBar.Navigator screenOptions={screenOptions}>
+          <NavBar.Screen name='Home' component={HomePage}/>
+          <NavBar.Screen name='Track' component={RunTracking}/>
+          <NavBar.Screen name='History' component={RunHistory}/>
+          <NavBar.Screen name='Chat' component={ChatScreen}/>
+        </NavBar.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
-
-const RootStack = createNativeStackNavigator({
-  initialRouteName: 'Home',
-  screens: {
-    Home: Homepage,
-    Chat: Chatscreen,
-    Runs: RunHistory,
-    CurrentRun: CurrentRun
-  },
-});
-
-const Navigation = createStaticNavigation(RootStack);
