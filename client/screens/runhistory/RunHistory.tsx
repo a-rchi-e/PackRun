@@ -1,13 +1,11 @@
 // react native
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Text, View, FlatList, TouchableOpacity } from 'react-native';
 
 // extra libraries
 import { LineChart } from "react-native-gifted-charts";
-import { DateTime } from "luxon";
 
 // styling
-import global from '../../global';
 import styles from './styles';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -40,6 +38,8 @@ export default function RunHistory() {
   };
 
 
+  // TRY AND USE WITH DATA STORED IN DB INSTEAD OF MOCKS
+  
   /* useEffect( () => {
     getRuns()
     .then( arrayOfDBRuns => {

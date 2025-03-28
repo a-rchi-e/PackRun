@@ -87,7 +87,7 @@ export default function HomePage() {
     }
 
     // TESTING THE REAL-TIME MAP RENDERING (PART 2)
-
+    
     async function timeout() {
 
         const { done, value: latestWaypoints } = waypointsGenerator.next();
